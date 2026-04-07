@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
-#define PORT 8080
-#define buffer_size 1024
+
+#define MY_SERVER_PORT 8080  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define preprocessor directive
+#define buffer_size 1024     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define preprocessor directive.
+struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netinet/in.h header file and contains fields for the address family, port number, and IP address. The address variable is declared as a global variable so that it can be accessed throughout the program.
+int addrlen = sizeof(address); //The addrlen variable is used to store the size of the address structure. It is initialized to the size of the address. This variable is passed as a parameter to the accept() system call to specify the size of the address structure that will be filled in with the client's address information when a connection is accepted.
 
 int main() {
 
@@ -47,7 +50,6 @@ struct sockaddr_in {
 
     //Binding the Socket:
 struct sockaddr_in address;
-const int PORT 8080;  //Where the clients can reach at
 
 /*  htonl converts a long integer (e.g. address) to network representation 
     htons converts a short integer (e.g. port) to a network representation
@@ -56,7 +58,7 @@ const int PORT 8080;  //Where the clients can reach at
 memset((char *)&address, 0, sizeof(address)); //Initialize the structure to zero
 address.sin_family = AF_INET; //Set the address family to AF_INET
 address.sin_addr.s_addr = htonl(INADDR_ANY); //Set the IP address to INADDR_ANY, which means that the socket will bind to all available interfaces on the machine
-address.sin_port = htons(PORT); //Set the port number to the specified PORT
+address.sin_port = htons(MY_SERVER_PORT); //Set the port number to the specified PORT
 
 if (bind(server_fd,(struct sockaddr *)&address,sizeof(address)) < 0) //Bind the socket to the address and port specified in the sockaddr_in structure
 { 
@@ -82,7 +84,7 @@ int accept(int socket, struct sockaddr *restrict address, socklen_t *restrict ad
 //Code to listen and accept incoming connections:
 if (listen(server_fd, 3) < 0) 
 { 
-    perror(“In listen”); 
+    perror("In listen"); 
     exit(EXIT_FAILURE); 
 }
 if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
@@ -97,7 +99,7 @@ if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&ad
 ////////////////////////////////////////////////////
 char buffer[1024] = {0};                             //Buffer to store the message received from the client. The size of the buffer is 1024 bytes and is initialized to zero using memset() to ensure that it does not contain any garbage values before receiving data from the client.
 int valread = read( new_socket , buffer, 1024);      //The read() system call is used to read data from the connected socket. It takes three parameters: the file descriptor of the connected socket (new_socket), a buffer to store the received data (buffer), and the maximum number of bytes to read (1024). The return value of read() is the number of bytes actually read, which is stored in the variable valread. If valread is negative, it indicates an error occurred while reading from the socket.
-printf(“%s\n”,buffer );                              //Print the message received from the client to the console. The buffer is treated as a null-terminated string, and the %s format specifier is used to print it. 
+printf("%s\n",buffer );                              //Print the message received from the client to the console. The buffer is treated as a null-terminated string, and the %s format specifier is used to print it. 
 if(valread < 0)
 { 
     printf("Error in communication: no bytes are there to read. \nTry connecting again.");      //If valread is negative, it indicates that an error occurred while reading from the socket. In this case, we print a message to the console indicating that there are no bytes to read. This could happen if the client has closed the connection or if there was an error in the communication.
