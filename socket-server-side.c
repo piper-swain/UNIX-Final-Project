@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
-#define PORT 8080
+#define MY_SERVER_PORT 8080
 int main(int argc, char const *argv[]){
     int server_fd, new_socket; long valread;
     struct sockaddr_in address;
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]){
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons( PORT );
+    address.sin_port = htons( MY_SERVER_PORT );
     
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     

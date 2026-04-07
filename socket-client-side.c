@@ -1,4 +1,4 @@
-/ Client side C/C++ program to demonstrate Socket programming
+// Client side C/C++ program to demonstrate Socket programming
 #include <stdio.h>
 #include <sys/socket.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#define PORT 8080
+#define MY_SERVER_PORT 8080
 
 int main(int argc, char const *argv[])
 {
@@ -22,10 +22,10 @@ int main(int argc, char const *argv[])
     }
     
     memset(&serv_addr, 0, sizeof(serv_addr));
-    
+
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-    
+    serv_addr.sin_port = htons(MY_SERVER_PORT);
+
     // Convert IPv4 and IPv6 addresses from text to binary form
     if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
     {
