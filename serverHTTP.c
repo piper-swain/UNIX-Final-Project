@@ -5,9 +5,10 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <time.h>
+#include <sys/types.h>
 
 #define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define pre>
-#define buffer_size 65536     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
+#define buffer_size 200000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
 //struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netin>
 
 int main() {
@@ -29,14 +30,15 @@ int addrlen = sizeof(struct sockaddr_in);
     exit(EXIT_FAILURE);
 }
 
-//////////////////////////S////////////////////////
+///////////////////////////////////////////////////
 ////      Step 2: Identify/Name a Socket      ////
 //////////////////////////////////////////////////
 
     //assigning a transport address to the socket. This is called "binding" the socket to an address.
     //The address is specified as a sockaddr structure, which includes the IP address and port number.
     //Like assigning a phone number to a phone line, so that it can be reached by others.
-
+int opt = 1;
+setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     //Binding the Socket:
 struct sockaddr_in address;
 
@@ -52,38 +54,42 @@ address.sin_port = htons(MY_SERVER_PORT); //Set the port number to the specified
 if (bind(server_fd,(struct sockaddr *)&address,sizeof(address)) < 0) //Bind the socket to the address and port specified in the sockaddr_in structure
 {
     perror("bind failed");
-    return 0;
+    exit(EXIT_FAILURE);
 }
+printf("Socket created, bind completed");
 
 //////////////////////////////////////////////////////////////////////
 ////   Step 3: Wait for an incoming connection on the server      ////
 //////////////////////////////////////////////////////////////////////
 
+while (1) {
+printf("server_fd before listen: %d\n", server_fd);
 //Code to listen and accept incoming connections:
 if (listen(server_fd, 3) < 0)
 {
-    printf("Socket created, bind completed.\n");
+    if (listen(server_fd, 3) < 0) {
+       perror ("listen failed");
+       exit (EXIT_FAILURE);
+    }
+
     printf("Listening...\n");
-    perror("In listen");
-    exit(EXIT_FAILURE);
 }
 if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
 {
-    printf("Client connected.\n");
     perror("In accept");
     exit(EXIT_FAILURE);
 }
-
+printf("Client connected.");
 
 ////////////////////////////////////////////////////
 ////     Step 4: Read and receive messages      ////
 ////////////////////////////////////////////////////
-char buffer[65536] = {0}; //Buffer to store the message received from the client.
-read(new_socket, buffer, 65536); //read the message from client and store in buffer
+char buffer[200000] = {0}; //Buffer to store the message received from the client.
+read(new_socket, buffer, 200000); //read the message from client and store in buffer
 printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browser's request to the server
 
 
-char response[65536];
+char response[200000];
 response[0] = '\0';
 
 
@@ -207,6 +213,10 @@ strcat(response,
 
     "<script>"   //Opening script tag to include JavaScript code that will handle the game logic and interactivity for the Bingo game. This script will define functions for drawing numbers, marking cells, checking for wins, and automating the robot's moves.
 
+    " window.onload = function() { "
+    " initCalls(); "
+    " };"
+
     "let calls = [];"
     "let index = 0;"
 
@@ -261,7 +271,7 @@ strcat(response,
     "  let cells = document.querySelectorAll('#' + boardId + ' td');"  //Select all the table cells (td elements) within the specified board (either 'player' or 'robot') and store them in a variable called cells. This allows the function to access and evaluate each cell on the specified board to check for winning combinations.
     "  let grid = [];"  
     "  for (let i = 0; i < 25; i++) {"
-            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor !== "") { "
+            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor)"
                 "grid.push(1); // marked "
             "} else { "
             "grid.push(0); "
@@ -286,9 +296,10 @@ strcat(response,
 
     // Robot auto play: robot checks cells accoording to the next randomly drawn number and marks it if it exists on the robot's board. This simulates the robot's turn in the Bingo game, allowing it to automatically mark cells based on the drawn numbers and check for wins.
     "setInterval(function() {" 
-    "  let call = document.getElementById('call').innerText;" // Get the current call (letter and number) from the "call" div and store it in a variable called call. This allows the robot to know which number has been drawn and should be marked on its Bingo board if it exists.
-    "  let cells = document.querySelectorAll('#robot td');" // Select all the table cells (td elements) within the robot's Bingo board and store them in a variable called cells. This allows the robot to access and evaluate each cell on its board to check if it contains the drawn number that needs to be marked.
-    "  let number = call.slice(1);" // Extract the number part from the call string by slicing off the first character (the letter) and store it in a variable called number. This allows the robot to compare the drawn number with the numbers on its Bingo board to determine if it should mark any cells.
+    "  let call = document.getElementById('call').innerText;"
+    "  if (!call.includes('-')) return;"
+    "  let cells = document.querySelectorAll('#robot td');"
+    "  let number = call.split('-')[1];"
     "  for (let i = 0; i < cells.length; i++) {"       // Loop through each cell in the robot's Bingo board and check if the inner text of the cell matches the current call (the drawn letter and number). If a match is found, it indicates that the robot has that number on its board and should mark it.
     "    if (cells[i].innerText === number) {"     // If the inner text of the current cell (cells[i]) matches the call (the drawn letter and number), it means that the robot has that number on its Bingo board and should mark it as selected.
     "      cells[i].style.backgroundColor = 'lightcoral';"       // Change the background color of the matching cell to lightcoral, visually indicating that the robot has marked this cell as selected based on the drawn number.
@@ -298,7 +309,7 @@ strcat(response,
     "  }"
     "}, 2000);"
 
-    "initCalls();"
+    "window.onload = function() { initCalls(); };"
     "</script>"
     "</body></html>"
     );
@@ -310,7 +321,10 @@ write (new_socket, response, strlen(response));   //The write() system call is u
 ////////////////////////////////////////////////////////
 close(new_socket);  //The close() system call is used to close the connected socket (new_socket) after we are done communicating with the client. This relea>
 close(server_fd);
+}
 
-return 0;
+exit(EXIT_FAILURE);
 
 }
+
+
