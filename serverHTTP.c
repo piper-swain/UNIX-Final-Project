@@ -4,12 +4,14 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <time.h>
 
-#define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define preprocessor directive
-#define buffer_size 65536     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define preprocessor directive.
-//struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netinet/in.h header file and contains fields for the address family, port number, and IP address. The address variable is declared as a global variable so that it can be accessed throughout the program.
+#define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define pre>
+#define buffer_size 65536     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
+//struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netin>
 
 int main() {
+    srand(time(NULL)); //Seed the random number generator with the current time to ensure that the random numbers generated for the Bingo boards are different each time the server is run.
 
 int server_fd, new_socket;
 int addrlen = sizeof(struct sockaddr_in);
@@ -78,7 +80,7 @@ if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&ad
 ////////////////////////////////////////////////////
 char buffer[65536] = {0}; //Buffer to store the message received from the client.
 read(new_socket, buffer, 65536); //read the message from client and store in buffer
-printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browswer's request to the server
+printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browser's request to the server
 
 
 char response[65536];
@@ -93,10 +95,31 @@ strcat(response,
 
 "<!DOCTYPE html>"              //HTML5 doctype declaration indicating that the document is an HTML5 document
 "<html>"                       //Opening HTML tag to start the HTML document
-"<head><title><Let's play BINGO!></title></head>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
+"<h1 style='text-align:center; font-size:50px;'>Let's play BINGO!</h1>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
+
+"<style>"   //Opening style tag to include CSS styles that will define the appearance of the elements on the webpage, such as the Bingo boards, cells, and win banner.
+"td { width:50px; height:50px; text-align:center; vertical-align:middle; position:relative; }" //CSS style definition for the table cells (td elements) in the Bingo boards. It sets the width and height of each cell to 50 pixels, centers the text both horizontally and vertically, and sets the position to relative to allow for absolute positioning of the ::after pseudo-element used for marking selected cells.
+
+".win-banner {"   //CSS class definition for the "win-banner" class, which is used to style the banner that is displayed when a player wins the Bingo game. This banner will be positioned in the center of the screen and will have a pop animation to draw attention to the win.
+"  position: fixed;"
+"  top: 40%; left: 50%;"
+"  transform: translate(-50%, -50%);" //The position property is set to fixed, which means that the win banner will be positioned relative to the viewport and will stay in the same position even when the page is scrolled. The top and left properties are set to 40% and 50% respectively, which positions the banner in the center of the screen. The transform property is used to adjust the position of the banner by translating it -50% horizontally and vertically, effectively centering it on the screen.
+"  background: gold;"
+"  color: DarkGoldenrod;"
+"  padding: 20px;"   //The padding property is set to 20 pixels, which adds space around the content of the win banner, making it larger and more visually appealing.
+"  font-size: 40px;"
+"  border-radius: 10px;"
+"  animation: pop 0.5s ease-in-out infinite alternate;"   //The animation property is set to "pop 0.5s ease-in-out infinite alternate", which applies the "pop" animation defined in the @keyframes rule below. This animation will cause the win banner to scale up and down continuously, creating a popping effect to draw attention to the win.
+"}"
+
+"@keyframes pop {"  //CSS keyframes rule that defines the "pop" animation used for the win banner. This animation will cause the banner to scale up and down continuously, creating a popping effect to draw attention to the win.
+"  from { transform: translate(-50%, -50%) scale(1); }"  //The "from" keyframe defines the starting state of the animation, where the win banner is at its normal size (scale(1)).
+"  to { transform: translate(-50%, -50%) scale(1.2); }" //The "to" keyframe defines the ending state of the animation, where the win banner is scaled up to 1.2 times its normal size (scale(1.2)). The animation will alternate between these two states, creating a continuous popping effect.
+"}"
+"</style>" //Closing style tag to end the CSS styles section of the HTML document
+"</head>"  //Closing head tag to end the head section of the HTML document
 
 "<body>"                                                //Opening body tag to start the body of the HTML document, which contains the content that will be displayed on the webpage
-"<h1 style='text-align:center;'>Let's play BINGO!</h1>" //displays large title at the top of the screen. 
 
 "<div style='text-align:center; font-size:40px;' id='call'>Draw Next Number</div>"  //Div element with an id of "call" that is used to display the current letter and number drawn in the Bingo game. Initially, it displays "Click Draw" as a prompt for the user to start the game.
 "<div style='text-align:center; margin:10px;'>"            //div element that contains the buttons for drawing a number and restarting the game. It is styled to center the content and add some margin around it.
@@ -114,13 +137,28 @@ strcat(response,
 );
 
 // Player grid- Randomly chooses a numer 1-99 to fill the player's Bingo board
-for (int i = 1; i <= 25; i++) {
+for (int i = 0; i < 25; i++) {    //Loop through each cell in the player's Bingo board (5 rows x 5 columns = 25 cells) and fill it with a random number based on the column it belongs to. The numbers are generated according to the standard Bingo rules, where each column has a specific range of numbers:
     char cell[100];
-    int num = rand() % 75 + 1; // Generate a random number between 1 and 75
-    sprintf(cell, "<td onclick='mark(this)'>%d</td>", num); // Create a table cell with the random number and an onclick event to mark the cell when clicked
-    strcat(response, cell); // Append the cell HTML to the response string
 
-    if (i % 5 == 0 && i != 25) // After every 5 cells, close the current row and start a new one, except after the last cell
+    int col = i % 5;  // 0=B, 1=I, 2=N, 3=G, 4=O
+    int min, max;
+
+    if (col == 0) { min = 1; max = 15; }        // If the column index is 0 (corresponding to the 'B' column), set the minimum value to 1 and the maximum value to 15 for random number generation. This means that the numbers in the 'B' column of the player's Bingo board will be randomly selected from the range 1 to 15 (inclusive).
+    else if (col == 1) { min = 16; max = 30; }  // If the column index is 1 (corresponding to the 'I' column), set the minimum value to 16 and the maximum value to 30 for random number generation. This means that the numbers in the 'I' column of the player's Bingo board will be randomly selected from the range 16 to 30 (inclusive).
+    else if (col == 2) { min = 31; max = 45; }
+    else if (col == 3) { min = 46; max = 60; }
+    else { min = 61; max = 75; }
+
+    if (i == 12) {
+        sprintf(cell, "<td onclick='mark(this)' style='background-color:lightgreen;'>FREE</td>");
+    } else {
+        int num = rand() % (max - min + 1) + min;
+        sprintf(cell, "<td onclick='mark(this)'>%d</td>", num);
+    }
+
+    strcat(response, cell);
+
+    if ((i + 1) % 5 == 0 && i != 24)
         strcat(response, "</tr><tr>");
 }
 
@@ -136,86 +174,141 @@ strcat(response,
     );
 
 // Robot grid
-for (int i = 1; i <= 25; i++) {
-    char cell[100];
-    int num = rand() % 75 + 1; // Generate a random number between 1 and 75
-    sprintf(cell, "<td onclick='mark(this)'>%d</td>", num); // Create a table cell with the random number and an onclick event to mark the cell when clicked
-    strcat(response, cell); // Append the cell HTML to the response string
+for (int i = 0; i < 25; i++) {   
+    char cell[100];   
 
-    if (i % 5 == 0 && i != 25) // After every 5 cells, close the current row and start a new one, except after the last cell
+    int col = i % 5;  // Calculate the column index (0 to 4) based on the current cell index (i). This is done using the modulus operator (%) to determine which column the current cell belongs to in the 5x5 grid of the Bingo board.
+    int min, max;     // Declare variables to store the minimum and maximum values for the random number generation based on the column index. The Bingo board is divided into 5 columns (B, I, N, G, O), each with a specific range of numbers:
+
+    if (col == 0) { min = 1; max = 15; }   // If the column index is 0 (corresponding to the 'B' column), set the minimum value to 1 and the maximum value to 15 for random number generation.
+    else if (col == 1) { min = 16; max = 30; }
+    else if (col == 2) { min = 31; max = 45; }
+    else if (col == 3) { min = 46; max = 60; }
+    else { min = 61; max = 75; }
+
+    if (i == 12) {
+        sprintf(cell, "<td style='background-color:lightcoral;'>FREE</td>");
+    } else {
+        int num = rand() % (max - min + 1) + min;
+        sprintf(cell, "<td>%d</td>", num);
+    }
+
+    strcat(response, cell);
+
+    if ((i + 1) % 5 == 0 && i != 24)
         strcat(response, "</tr><tr>");
 }
 
-strcat(response,
+strcat(response,      
     "</tr></table>"   // Closing table tag to end the robot's Bingo board
     "</div>"          // Closing div tag to end the section containing the robot's board
     "</div>"          // Closing div tag to end the container that holds both the player's and robot's boards
 
-    // JAVASCRIPT
+
     "<script>"   //Opening script tag to include JavaScript code that will handle the game logic and interactivity for the Bingo game. This script will define functions for drawing numbers, marking cells, checking for wins, and automating the robot's moves.
 
-    "function draw() {"     //Function definition for the draw() function, which is called when the "Draw Number" button is clicked. This function is responsible for randomly selecting a letter and number combination for the Bingo game and updating the content of the "call" div to display the drawn number.
-    "  let letters = ['B','I','N','G','O'];" 
-    "  let letter = letters[Math.floor(Math.random()*5)];" // Generate a random letter from the array of letters (B, I, N, G, O) by selecting a random index between 0 and 4.
-    "  let number = Math.floor(Math.random()*75) + 1;"  // Generate a random number between 1 and 75, which is the typical range of numbers used in a Bingo game.
-    "  document.getElementById('call').innerText = letter + number;" // Update the inner text of the "call" div to display the drawn letter and number combination, providing feedback to the player about the current call in the Bingo game.
+    "let calls = [];"
+    "let index = 0;"
+
+    "function initCalls() {"   //Function definition for the initCalls() function, which initializes the calls array with all possible letter and number combinations for the Bingo game. This function generates the standard Bingo calls based on the letters B, I, N, G, O and their corresponding number ranges, and then shuffles the calls to randomize the order in which they will be drawn during the game.
+    "  let letters = ['B','I','N','G','O'];"
+    "  let ranges = ["
+    "    [1,15],"
+    "    [16,30],"
+    "    [31,45],"
+    "    [46,60],"
+    "    [61,75]"
+    "  ];"
+
+    "  for (let i = 0; i < 5; i++) {"    // Loop through each letter and its corresponding number range to generate the calls for the Bingo game. For each letter (B, I, N, G, O), we loop through the numbers in the specified range and create a call by concatenating the letter with the number (e.g., "B1", "I16", "N31", etc.) and push it into the calls array.
+    "    for (let n = ranges[i][0]; n <= ranges[i][1]; n++) {"  
+    "      calls.push(letters[i] + n);"
+    "    }"
+    "  }"
+
+    "  // shuffle (Fisher-Yates)"  // After generating the calls, we shuffle the calls array using the Fisher-Yates algorithm to ensure that the order of the calls is random for each game. This algorithm works by iterating through the array from the last element to the first, randomly selecting an index from the remaining unshuffled portion of the array, and swapping the current element with the randomly selected element.
+    "  for (let i = calls.length - 1; i > 0; i--) {"
+    "    let j = Math.floor(Math.random() * (i + 1));"
+    "    let temp = calls[i];"
+    "    calls[i] = calls[j];"
+    "    calls[j] = temp;"
+    "  }"
     "}"
+
+"function draw() {" //Function definition for the draw() function, which is called when the "Draw Number" button is clicked. This function is responsible for drawing the next letter and number combination from the calls array and updating the content of the "call" div to display the drawn number. It also checks if there are no more calls left to draw and updates the "call" div accordingly.
+"  if (index >= calls.length) {"
+"    document.getElementById('call').innerText = 'No more numbers';"
+"    return;"
+"  }"
+
+"  document.getElementById('call').innerText = calls[index][0] + "-" + calls[index].slice(1);"
+"  index++;"
+"}"
 
     "function mark(cell) {"     //Function definition for the mark() function, which is called when a cell in the player's Bingo board is clicked. This function is responsible for marking the cell as selected and checking if the player has won the game.
-    "  cell.style.backgroundColor = 'green';"     // Change the background color of the clicked cell to green, visually indicating that the cell has been marked as selected by the player.
-    "  if (checkWin('player')) alert('You won!');" // After marking the cell, call the checkWin() function with the argument 'player' to check if the player has achieved a winning combination on their Bingo board. If the function returns true, display an alert message indicating that the player has won the game.
+    "  cell.style.backgroundColor = 'lightGreen';"     // Change the background color of the clicked cell to green, visually indicating that the cell has been marked as selected by the player.
+    "  if (checkWin('player')) showWin('You won!');" // After marking the cell, call the checkWin() function with the argument 'player' to check if the player has achieved a winning combination on their Bingo board. If the function returns true, display an alert message indicating that the player has won the game.
     "}"
 
-    "function checkWin(boardId) {"    //Function definition for the checkWin() function, which takes a boardId as an argument to identify which Bingo board (player or robot) to check for a winning combination. This function checks for winning conditions (five in a row) in both rows and columns of the specified board. 
-    "  let cells = document.querySelectorAll('#' + boardId + ' td');"  // Select all the table cells (td elements) within the specified board (identified by boardId) and store them in a variable called cells. This allows the function to access and evaluate the state of each cell on the board to determine if there is a winning combination.
-    "  let grid = [];"   // Initialize an empty array called grid, which will be used to store the background color of each cell on the specified Bingo board. This array will be used to check for winning combinations by evaluating the colors of the cells in rows and columns.
-    "  for (let i = 0; i < 25; i++) {"    // Loop through each of the 25 cells on the Bingo board (5 rows x 5 columns) and push the background color of each cell into the grid array. This allows the function to create a representation of the board's state based on the colors of the cells, which can then be used to check for winning combinations.
-    "    grid.push(cells[i].style.backgroundColor);" // Push the background color of the current cell (cells[i]) into the grid array. This captures the state of each cell in terms of whether it has been marked (e.g., green for the player) or not, which is essential for determining if there is a winning combination on the board.
-    "  }"
-    
-    //Check diagonals
-    "  if (grid[0] && grid[0] === grid[6] && grid[0] === grid[12] && grid[0] === grid[18] && grid[0] === grid[24]) return true;"  // Check the first diagonal (top-left to bottom-right) by comparing the background colors of the cells at indices 0, 6, 12, 18, and 24 in the grid array. If all these cells have the same non-empty background color, it indicates a winning combination along this diagonal, and the function returns true.
-    "  if (grid[4] && grid[4] === grid[8] && grid[4] === grid[12] && grid[4] === grid[16] && grid[4] === grid[20]) return true;"
-    "  }"
+    "function showWin(message) {" //Function definition for the showWin() function, which is called when a player wins the game. This function is responsible for displaying a banner on the screen with a message indicating the winner of the game.
+    "  let banner = document.createElement('div');" // Create a new div element using document.createElement('div') and store it in a variable called banner. This div will be used to display the win message on the screen.
+    "  banner.className = 'win-banner';"  // Set the class name of the banner div to "win-banner", which will apply the CSS styles defined for the win banner (such as positioning, background color, font size, and animation) to visually indicate that a player has won the game.
+    "  banner.innerText = message;" // Set the inner text of the banner div to the message passed as an argument to the showWin() function. This message will indicate whether the player or the robot has won the game.
+    "  document.body.appendChild(banner);" // Append the banner div to the body of the HTML document using document.body.appendChild(banner), which will display the win banner on the screen when a player wins the game.
+    "}"
 
+    "function checkWin(boardId) {"     //Function definition for the checkWin() function, which is called to check if a player has achieved a winning combination on their Bingo board. This function takes a boardId as an argument, which specifies whether to check the player's board or the robot's board for a win.
+    "  let cells = document.querySelectorAll('#' + boardId + ' td');"  //Select all the table cells (td elements) within the specified board (either 'player' or 'robot') and store them in a variable called cells. This allows the function to access and evaluate each cell on the specified board to check for winning combinations.
+    "  let grid = [];"  
+    "  for (let i = 0; i < 25; i++) {"
+            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor !== "") { "
+                "grid.push(1); // marked "
+            "} else { "
+            "grid.push(0); "
+            "}"
+    "}      "
+
+    // diagonals
+    "if (grid[0] && grid[6] && grid[12] && grid[18] && grid[24]) return true; "
+    "if (grid[4] && grid[8] && grid[12] && grid[16] && grid[20]) return true; "
     // rows
-    "  for (let i = 0; i < 5; i++) {"
-    "    if (grid[i*5] && grid[i*5] === grid[i*5+1] && grid[i*5] === grid[i*5+2] && grid[i*5] === grid[i*5+3] && grid[i*5] === grid[i*5+4]) return true;"
-    "  }"
+    "for (let i = 0; i < 5; i++) { "
+    "   if (grid[i*5] && grid[i*5+1] && grid[i*5+2] && grid[i*5+3] && grid[i*5+4]) return true; "
+    "} "
 
     // columns
-    "  for (let i = 0; i < 5; i++) {"
-    "    if (grid[i] && grid[i] === grid[i+5] && grid[i] === grid[i+10] && grid[i] === grid[i+15] && grid[i] === grid[i+20]) return true;"
-    "  }"
+    "for (let i = 0; i < 5; i++) { "
+        "if (grid[i] && grid[i+5] && grid[i+10] && grid[i+15] && grid[i+20]) return true; "
+    "}  "
 
     "  return false;"
-    "}"
+    "   }"
 
     // Robot auto play: robot checks cells accoording to the next randomly drawn number and marks it if it exists on the robot's board. This simulates the robot's turn in the Bingo game, allowing it to automatically mark cells based on the drawn numbers and check for wins.
     "setInterval(function() {" 
     "  let call = document.getElementById('call').innerText;" // Get the current call (letter and number) from the "call" div and store it in a variable called call. This allows the robot to know which number has been drawn and should be marked on its Bingo board if it exists.
     "  let cells = document.querySelectorAll('#robot td');" // Select all the table cells (td elements) within the robot's Bingo board and store them in a variable called cells. This allows the robot to access and evaluate each cell on its board to check if it contains the drawn number that needs to be marked.
+    "  let number = call.slice(1);" // Extract the number part from the call string by slicing off the first character (the letter) and store it in a variable called number. This allows the robot to compare the drawn number with the numbers on its Bingo board to determine if it should mark any cells.
     "  for (let i = 0; i < cells.length; i++) {"       // Loop through each cell in the robot's Bingo board and check if the inner text of the cell matches the current call (the drawn letter and number). If a match is found, it indicates that the robot has that number on its board and should mark it.
-    "    if (cells[i].innerText === call) {"     // If the inner text of the current cell (cells[i]) matches the call (the drawn letter and number), it means that the robot has that number on its Bingo board and should mark it as selected.
-    "      cells[i].style.backgroundColor = 'red';"       // Change the background color of the matching cell to red, visually indicating that the robot has marked this cell as selected based on the drawn number.
-    "      if (checkWin('robot')) alert('Robot wins!');"
+    "    if (cells[i].innerText === number) {"     // If the inner text of the current cell (cells[i]) matches the call (the drawn letter and number), it means that the robot has that number on its Bingo board and should mark it as selected.
+    "      cells[i].style.backgroundColor = 'lightcoral';"       // Change the background color of the matching cell to lightcoral, visually indicating that the robot has marked this cell as selected based on the drawn number.
+    "      if (checkWin('robot')) showWin('Robot wins!');" // After marking the cell, call the checkWin() function with the argument 'robot' to check if the robot has achieved a winning combination on its Bingo board. If the function returns true, display an alert message indicating that the robot has won the game.
+    "      break;" // Break out of the loop after marking the cell and checking for a win, since the robot only needs to mark one cell per drawn number and check for a win after marking.
     "    }"
     "  }"
     "}, 2000);"
 
-
+    "initCalls();"
     "</script>"
-
     "</body></html>"
     );
 
-
-write (new_socket, response, strlen(response));
+write (new_socket, response, strlen(response));   //The write() system call is used to send the HTTP response back to the client through the connected socket (new_socket). The response string is sent as a byte stream, and the length of the response is determined using strlen(response) to ensure that the entire response is transmitted to the client.
 
 ////////////////////////////////////////////////////////
 ////     Step 5: Close the connection and socket    ////
 ////////////////////////////////////////////////////////
-close(new_socket);  //The close() system call is used to close the connected socket (new_socket) after we are done communicating with the client. This releases the resources associated with the socket and allows the server to accept new incoming connections. It is important to close the socket when it is no longer needed to free up system resources and avoid potential memory leaks.
+close(new_socket);  //The close() system call is used to close the connected socket (new_socket) after we are done communicating with the client. This relea>
 close(server_fd);
 
 return 0;
