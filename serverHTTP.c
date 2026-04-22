@@ -67,13 +67,12 @@ printf("server_fd before listen: %d\n", server_fd);
 //Code to listen and accept incoming connections:
 if (listen(server_fd, 3) < 0)
 {
-    if (listen(server_fd, 3) < 0) {
        perror ("listen failed");
        exit (EXIT_FAILURE);
-    }
+}
 
     printf("Listening...\n");
-}
+
 if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
 {
     perror("In accept");
@@ -271,7 +270,7 @@ strcat(response,
     "  let cells = document.querySelectorAll('#' + boardId + ' td');"  //Select all the table cells (td elements) within the specified board (either 'player' or 'robot') and store them in a variable called cells. This allows the function to access and evaluate each cell on the specified board to check for winning combinations.
     "  let grid = [];"  
     "  for (let i = 0; i < 25; i++) {"
-            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor)"
+            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor) {"
                 "grid.push(1); // marked "
             "} else { "
             "grid.push(0); "
@@ -320,8 +319,8 @@ write (new_socket, response, strlen(response));   //The write() system call is u
 ////     Step 5: Close the connection and socket    ////
 ////////////////////////////////////////////////////////
 close(new_socket);  //The close() system call is used to close the connected socket (new_socket) after we are done communicating with the client. This relea>
-close(server_fd);
 }
+close(server_fd);
 
 exit(EXIT_FAILURE);
 
