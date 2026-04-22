@@ -241,7 +241,7 @@ strcat(response,
 "    return;"
 "  }"
 
-"  document.getElementById('call').innerText = calls[index][0] + "-" + calls[index].slice(1);"
+"  document.getElementById('call').innerText = calls[index][0] + \"-\" + calls[index].slice(1);"
 "  index++;"
 "}"
 
