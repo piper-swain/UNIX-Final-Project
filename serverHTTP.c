@@ -102,7 +102,7 @@ strcat(response,
 
 "<!DOCTYPE html>"              //HTML5 doctype declaration indicating that the document is an HTML5 document
 "<html>"                       //Opening HTML tag to start the HTML document
-"<h1 style='text-align:center; font-size:50px;'>Let's play BINGO!</h1>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
+"<head>"
 
 "<style>"   //Opening style tag to include CSS styles that will define the appearance of the elements on the webpage, such as the Bingo boards, cells, and win banner.
 "td { width:50px; height:50px; text-align:center; vertical-align:middle; position:relative; }" //CSS style definition for the table cells (td elements) in the Bingo boards. It sets the width and height of each cell to 50 pixels, centers the text both horizontally and vertically, and sets the position to relative to allow for absolute positioning of the ::after pseudo-element used for marking selected cells.
@@ -127,6 +127,8 @@ strcat(response,
 "</head>"  //Closing head tag to end the head section of the HTML document
 
 "<body>"                                                //Opening body tag to start the body of the HTML document, which contains the content that will be displayed on the webpage
+
+"<h1 style='text-align:center; font-size:50px;'>Let's play BINGO!</h1>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
 
 "<div style='text-align:center; font-size:40px;' id='call'>Draw Next Number</div>"  //Div element with an id of "call" that is used to display the current letter and number drawn in the Bingo game. Initially, it displays "Click Draw" as a prompt for the user to start the game.
 "<div style='text-align:center; margin:10px;'>"            //div element that contains the buttons for drawing a number and restarting the game. It is styled to center the content and add some margin around it.
