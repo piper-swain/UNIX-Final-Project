@@ -62,7 +62,7 @@ printf("Socket created, bind completed");
 ////   Step 3: Wait for an incoming connection on the server      ////
 //////////////////////////////////////////////////////////////////////
 
-while (1) {
+
 printf("server_fd before listen: %d\n", server_fd);
 //Code to listen and accept incoming connections:
 if (listen(server_fd, 3) < 0)
@@ -72,6 +72,8 @@ if (listen(server_fd, 3) < 0)
 }
 
     printf("Listening...\n");
+
+while (1) {
 
 if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
 {
@@ -99,7 +101,7 @@ strcat(response,
 "\r\n"                          //Blank line to separate the headers from the body of the response
 
 "<!DOCTYPE html>"              //HTML5 doctype declaration indicating that the document is an HTML5 document
-"<html>"                       //Opening HTML tag to start the HTML document
+"<html><head>"                       //Opening HTML tag to start the HTML document
 "<h1 style='text-align:center; font-size:50px;'>Let's play BINGO!</h1>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
 
 "<style>"   //Opening style tag to include CSS styles that will define the appearance of the elements on the webpage, such as the Bingo boards, cells, and win banner.
@@ -270,12 +272,12 @@ strcat(response,
     "  let cells = document.querySelectorAll('#' + boardId + ' td');"  //Select all the table cells (td elements) within the specified board (either 'player' or 'robot') and store them in a variable called cells. This allows the function to access and evaluate each cell on the specified board to check for winning combinations.
     "  let grid = [];"  
     "  for (let i = 0; i < 25; i++) {"
-            "if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor) {"
-                "grid.push(1); // marked "
-            "} else { "
-            "grid.push(0); "
-            "}"
-    "}      "
+    "    if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor !== '') {"
+    "      grid.push(1);"
+    "    } else {"
+    "      grid.push(0);"
+    "    }"
+    "  }"
 
     // diagonals
     "if (grid[0] && grid[6] && grid[12] && grid[18] && grid[24]) return true; "
