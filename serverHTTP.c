@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 #define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define pre>
-#define buffer_size 1000000000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
+#define buffer_size 200000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
 //struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netin>
 
 int main() {
@@ -85,12 +85,12 @@ printf("Client connected.");
 ////////////////////////////////////////////////////
 ////     Step 4: Read and receive messages      ////
 ////////////////////////////////////////////////////
-char buffer[1000000000] = {0}; //Buffer to store the message received from the client.
-read(new_socket, buffer, 1000000000); //read the message from client and store in buffer
+char buffer[200000] = {0}; //Buffer to store the message received from the client.
+read(new_socket, buffer, 200000); //read the message from client and store in buffer
 printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browser's request to the server
 
 
-char response[1000000000];
+char response[200000];
 response[0] = '\0';
 
 
