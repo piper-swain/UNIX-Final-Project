@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 #define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define pre>
-#define buffer_size 200000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
+#define buffer_size 1000000000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
 //struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netin>
 
 int main() {
@@ -85,12 +85,12 @@ printf("Client connected.");
 ////////////////////////////////////////////////////
 ////     Step 4: Read and receive messages      ////
 ////////////////////////////////////////////////////
-char buffer[200000] = {0}; //Buffer to store the message received from the client.
-read(new_socket, buffer, 200000); //read the message from client and store in buffer
+char buffer[1000000000] = {0}; //Buffer to store the message received from the client.
+read(new_socket, buffer, 1000000000); //read the message from client and store in buffer
 printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browser's request to the server
 
 
-char response[200000];
+char response[1000000000];
 response[0] = '\0';
 
 
@@ -101,7 +101,7 @@ strcat(response,
 "\r\n"                          //Blank line to separate the headers from the body of the response
 
 "<!DOCTYPE html>"              //HTML5 doctype declaration indicating that the document is an HTML5 document
-"<html><head>"                       //Opening HTML tag to start the HTML document
+"<html>"                       //Opening HTML tag to start the HTML document
 "<h1 style='text-align:center; font-size:50px;'>Let's play BINGO!</h1>"   //Head section of the HTML document containing the title of the page, which is displayed in the browser's tab
 
 "<style>"   //Opening style tag to include CSS styles that will define the appearance of the elements on the webpage, such as the Bingo boards, cells, and win banner.
@@ -310,7 +310,6 @@ strcat(response,
     "  }"
     "}, 2000);"
 
-    "window.onload = function() { initCalls(); };"
     "</script>"
     "</body></html>"
     );
