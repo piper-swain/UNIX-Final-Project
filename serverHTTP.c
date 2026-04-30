@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 #define MY_SERVER_PORT 9090  //The port number on which the server will listen for incoming connections. This is defined as a constant using the #define pre>
-#define buffer_size 200000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
+#define buffer_size 1000000     //The size of the buffer used to store messages received from the client. This is also defined as a constant using the #define>
 //struct sockaddr_in address;   //The sockaddr_in structure is used to specify the address and port number for the server socket. It is defined in the netin>
 
 int main() {
@@ -85,12 +85,12 @@ printf("Client connected.");
 ////////////////////////////////////////////////////
 ////     Step 4: Read and receive messages      ////
 ////////////////////////////////////////////////////
-char buffer[200000] = {0}; //Buffer to store the message received from the client.
-read(new_socket, buffer, 200000); //read the message from client and store in buffer
+char buffer[1000000] = {0}; //Buffer to store the message received from the client.
+read(new_socket, buffer, 1000000); //read the message from client and store in buffer
 printf("%s\n", buffer); //Print the message received from the client to the console. Shows the browser's request to the server
 
 
-char response[200000];
+char response[1000000];
 response[0] = '\0';
 
 
@@ -143,6 +143,7 @@ strcat(response,
 "<h2>Your Bingo Card</h2>"                          //Heading element that displays the title "You" above the player's Bingo board, indicating that this board belongs to the user.
 "<table id='player' border='1' style='font-size:30px;'>"       //Table element that represents the player's Bingo board. It has an id of "player" for reference in JavaScript, a border attribute to create visible borders around the cells, and inline styling to set the font size of the cell content to 30 pixels.
 "<tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>" //Header row of the player's Bingo board, containing the letters B, I, N, G, and O as column headers. This row is static and does not change during the game, serving as a reference for the columns of the Bingo board.
+"<tr>" //ADDED LINE
 );
 
 // Player grid- Randomly chooses a numer 1-99 to fill the player's Bingo board
@@ -180,6 +181,7 @@ strcat(response,
     "<h2>Robot's Bingo Card</h2>"                                         //Heading element that displays the title "Robot" above the robot's Bingo board, indicating that this board belongs to the computer opponent.
     "<table id='robot' border='1' style='font-size:30px;'>" //Table element that represents the robot's Bingo board. It has an id of "robot" for reference in JavaScript, a border attribute to create visible borders around the cells, and inline styling to set the font size of the cell content to 30 pixels.
     "<tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>"  //Header row of the robot's Bingo board, containing the letters B, I, N, G, and O as column headers. This row is static and does not change during the game, serving as a reference for the columns of the Bingo board.
+    "<tr>"
     );
 
 // Robot grid
@@ -210,6 +212,7 @@ for (int i = 0; i < 25; i++) {
 
 strcat(response,      
     "</tr></table>"   // Closing table tag to end the robot's Bingo board
+    "<tr>"        //ADDED LINE
     "</div>"          // Closing div tag to end the section containing the robot's board
     "</div>"          // Closing div tag to end the container that holds both the player's and robot's boards
 
@@ -270,9 +273,9 @@ strcat(response,
     "  document.body.appendChild(banner);" // Append the banner div to the body of the HTML document using document.body.appendChild(banner), which will display the win banner on the screen when a player wins the game.
     "}"
 
-    "function checkWin(boardId) {"     //Function definition for the checkWin() function, which is called to check if a player has achieved a winning combination on their Bingo board. This function takes a boardId as an argument, which specifies whether to check the player's board or the robot's board for a win.
-    "  let cells = document.querySelectorAll('#' + boardId + ' td');"  //Select all the table cells (td elements) within the specified board (either 'player' or 'robot') and store them in a variable called cells. This allows the function to access and evaluate each cell on the specified board to check for winning combinations.
-    "  let grid = [];"  
+    "function checkWin(boardId) {"
+    "  let cells = document.querySelectorAll('#' + boardId + ' td');"
+    "  let grid = [];"
     "  for (let i = 0; i < 25; i++) {"
     "    if (cells[i].innerText === 'FREE' || cells[i].style.backgroundColor !== '') {"
     "      grid.push(1);"
@@ -282,20 +285,21 @@ strcat(response,
     "  }"
 
     // diagonals
-    "if (grid[0] && grid[6] && grid[12] && grid[18] && grid[24]) return true; "
-    "if (grid[4] && grid[8] && grid[12] && grid[16] && grid[20]) return true; "
-    // rows
-    "for (let i = 0; i < 5; i++) { "
-    "   if (grid[i*5] && grid[i*5+1] && grid[i*5+2] && grid[i*5+3] && grid[i*5+4]) return true; "
-    "} "
+    "  if (grid[0] && grid[6] && grid[12] && grid[18] && grid[24]) return true;"
+    "  if (grid[4] && grid[8] && grid[12] && grid[16] && grid[20]) return true;"
+
+    //rows
+    "  for (let i = 0; i < 5; i++) {"
+    "    if (grid[i*5] && grid[i*5+1] && grid[i*5+2] && grid[i*5+3] && grid[i*5+4]) return true;"
+    "  }"
 
     // columns
-    "for (let i = 0; i < 5; i++) { "
-        "if (grid[i] && grid[i+5] && grid[i+10] && grid[i+15] && grid[i+20]) return true; "
-    "}  "
+    "  for (let i = 0; i < 5; i++) {"
+    "    if (grid[i] && grid[i+5] && grid[i+10] && grid[i+15] && grid[i+20]) return true;"
+    "  }"
 
     "  return false;"
-    "   }"
+    "}"
 
     // Robot auto play: robot checks cells accoording to the next randomly drawn number and marks it if it exists on the robot's board. This simulates the robot's turn in the Bingo game, allowing it to automatically mark cells based on the drawn numbers and check for wins.
     "setInterval(function() {" 
