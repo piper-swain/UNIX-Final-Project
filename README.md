@@ -1,4 +1,6 @@
 # Bingo Web Game (C, HTML, JavaScript)
+**UNIX Programming Final Project**
+
 An interactive Bingo game built from scratch using a custom C-based HTTP server and a dynamic HTML/CSS/JavaScript frontend. The game features a playable user board, an automated robot opponent, animations, and is visually appealing.
 
 <img src="https://github.com/user-attachments/assets/222f06e0-9a72-4a90-b0a9-db593ff4c17c" width="300">
