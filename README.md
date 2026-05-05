@@ -15,13 +15,13 @@ An interactive Bingo game built from scratch using a custom C-based HTTP server 
 - **Stylized User Interface**
   - gradients, shadows, and a responsive layout, which makes for a more enjoyable, quality experience
 
----
+
 ## 🐞 Structure
 * **UNIX-Final-Project/**
   * server.c        : Backend (Custom C HTTP server)
   * index.html      : Frontend (HTML + CSS + JS)
   * README.md       : Project documentation & Descriptoon
----
+
 ### Backend (C Server)
 * Uses IPv4 TCP sockets (`AF_INET`, `SOCK_STREAM`)
 * Binds to port 9090 and listens for incoming connections
@@ -38,8 +38,7 @@ An interactive Bingo game built from scratch using a custom C-based HTTP server 
 * Detects win conditions (full rows, columns, or diagonals)
 
 ---
-## How to Use
-### To open the game:
+## 🌿 To open the game:
 **1. Compile the server**
 * gcc server.c -o server
 
@@ -51,26 +50,26 @@ Expected output:
 
 **3. Open on the web browser**
 * http://localhost:9090
----
-### Gameplay Flow
-1. Click “Draw Number”
+
+## 🍃 Gameplay Flow
+**1. Click “Draw Number”**
   * A random Bingo call (e.g., B-12, G-58) is displayed
   * The number display animates for visual feedback
 
-2. Match the number on your board:
+**2. Match the number on your board:**
   * If you have the number, click the corresponding cell
   * The cell turns green
 
-3. Robot behavior:
+**3. Robot behavior:**
   * The robot automatically scans its board
   * If it has the number, it marks it (cell turns pink)
 ---
-## Limitations
+## 🏵 Limitations
 * Possible duplicate numbers within columns
 * Single-threaded server (handles one client at a time)
 * etc.
 ---
-## Demonstrated Concepts & Skills
+## 🌷 Demonstrated Concepts & Skills
 **Systems Programming**
   * Socket creation and management
   * Memory allocation and file I/O
