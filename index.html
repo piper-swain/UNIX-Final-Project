@@ -125,8 +125,9 @@ table {
 </head>
 
 <body>
+<audio id="markSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
 
-<h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">⭐ Let's play BINGO! ⭐</h1>
+<h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">🌼 Let's play BINGO! 🌼</h1>
 
 <div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">Draw Next Number</div>
 
@@ -225,6 +226,10 @@ function draw() {
 
 function mark(cell) {
   cell.style.backgroundColor = 'lightgreen';
+
+  let sound = document.getElementById("markSound");
+  sound.currentTime = 0;
+  sound.play();
 
   if (checkWin('player')) {
     showWin('You won! ');
