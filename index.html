@@ -140,19 +140,15 @@ table {
 <body>
 <audio id="markSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
 
-/* Let's Play BINGO!*/
 <h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">🌼 Let's play BINGO! 🌼</h1>
 
-/* Draw Next Number*/
 <div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">Draw Next Number</div>
 
-/* Buttons */
 <div style="text-align:center; margin:10px;">
 <button onclick="draw()">Draw Number</button>
 <button onclick="location.reload()">Restart</button>
 </div>
 
-/* Bingo Cards */
 <div style="display:flex; justify-content:space-around;">
 
 <div>
@@ -171,10 +167,6 @@ table {
 
 </div>
 
-
-/* This section contains the JavaScript code that implements the functionality of the bingo game, 
-including initializing the calls, generating the bingo boards, drawing numbers, marking cells, 
-checking for wins, and launching confetti when a player wins. */
 <script>
 let calls = [];
 let index = 0;
