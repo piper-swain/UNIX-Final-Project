@@ -128,7 +128,7 @@ table {
 
 <h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">⭐ Let's play BINGO! ⭐</h1>
 
-<div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">draw Next Number</div>
+<div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">Draw Next Number</div>
 
 <div style="text-align:center; margin:10px;">
 <button onclick="draw()">Draw Number</button>
@@ -221,6 +221,15 @@ function draw() {
   el.classList.add("animate");
 
   index++;
+}
+
+function mark(cell) {
+  cell.style.backgroundColor = 'lightgreen';
+
+  if (checkWin('player')) {
+    showWin('You won! ');
+    launchConfetti();
+  }
 }
 
 function showWin(message) {
