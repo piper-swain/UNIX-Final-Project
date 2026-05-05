@@ -3,37 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <style>
-  body {
+  /* This section defines the overall styling for the background of the page */
+  body { 
     margin: 0;
     min-height: 100vh; 
     background: #5b8eb0;
     background: linear-gradient(90deg,rgba(91, 142, 176, 1) 0%, rgba(105, 194, 137, 1) 50%, rgba(227, 196, 123, 1) 100%);
-   }
+  }
 
-table {
-  background: white;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
-}
+  /* This section defines the styling for the table */
+  table { 
+    background: white;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+  }
 
-/* grid cells */
-td {
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  vertical-align: middle;
-  background: white;
-  border: 1px solid #ddd;
-  transition: background 0.2s;
-}
+/* This section defines the grid cells */
+  td {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    background: white;
+    border: 1px solid #ddd;
+    transition: background 0.2s;
+  }
 
-/* header row stays styled */
+/* This section defines the header row */
 th {
   background: #f2f2f2;
 }
 
-
+/* This section defines the styling for the buttons */
 button {
   background: white;
   border: none;
@@ -48,16 +50,18 @@ button {
   transition: all 0.2s ease;
 }
 
+/* This section defines the styling for the buttons on hover */
 button:hover {
   transform: translateY(-3px) scale(1.05);
   background: #F0D189;
 }
 
+/* This section defines the styling for the buttons when active (clicked) */
 button:active {
   transform: translateY(1px);
 }
 
-
+/* This section defines the styling for the win banner */
 .win-banner {
     position: fixed;       /* banner stays in place */
     top: 40%; left: 50%;   /* center horizontally and vertically */
@@ -70,11 +74,13 @@ button:active {
     animation: pop 0.5s ease-in-out infinite alternate;
 }
 
+/* This section defines the animation for the win banner */
 @keyframes pop {
     from { transform: translate(-50%, -50%) scale(1); }
     to { transform: translate(-50%, -50%) scale(1.2); }
 }
 
+/* This section defines the styling for the confetti elements */
 .confetti {
   position: fixed;
   width: 10px;
@@ -85,6 +91,7 @@ button:active {
   animation: fall 2s linear forwards;
 }
 
+/* This section defines the animation for the confetti elements */
 @keyframes fall {
   to {
     transform: translateY(100vh) rotate(360deg);
@@ -92,6 +99,7 @@ button:active {
   }
 }
 
+/* This section defines the animation for the call element when a new number is drawn */
 @keyframes popIn {
   0% {
     transform: scale(0.5);
@@ -106,36 +114,45 @@ button:active {
   }
 }
 
+/* This section applies the popIn animation to the call element when it has the animate class */
 #call.animate {
   animation: popIn 0.4s ease;
 }
 
+/* This section defines the styling for the call element, which displays the current number being called. 
+It is positioned above the tables and does not allow pointer events to ensure that it does not interfere 
+with clicking on the bingo cards. */
 #call {
   pointer-events: none;
   position: relative;
   z-index: 1;
 }
 
-table {
+/* This section defines the styling for the table */
+table {  
   position: relative;
   z-index: 2;
 }
 
-</style>
+</style> 
 </head>
 
 <body>
 <audio id="markSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
 
+/* Let's Play BINGO!*/
 <h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">🌼 Let's play BINGO! 🌼</h1>
 
+/* Draw Next Number*/
 <div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">Draw Next Number</div>
 
+/* Buttons */
 <div style="text-align:center; margin:10px;">
 <button onclick="draw()">Draw Number</button>
 <button onclick="location.reload()">Restart</button>
 </div>
 
+/* Bingo Cards */
 <div style="display:flex; justify-content:space-around;">
 
 <div>
@@ -154,6 +171,10 @@ table {
 
 </div>
 
+
+/* This section contains the JavaScript code that implements the functionality of the bingo game, 
+including initializing the calls, generating the bingo boards, drawing numbers, marking cells, 
+checking for wins, and launching confetti when a player wins. */
 <script>
 let calls = [];
 let index = 0;
