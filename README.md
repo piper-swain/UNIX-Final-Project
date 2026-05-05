@@ -7,24 +7,24 @@ An interactive Bingo game built from scratch using a custom C-based HTTP server 
 
 ---
 ## 🌼 Features
-- **Animated number drawing system.**
+- **Animated number drawing system**
 - **Restart button**
 - **Randomly generated Bingo cards**
-  - one for the player, one for the robot opponent
+  - one for the user, one for the robot opponent
   - cards align with real-life game standards (ex: free space, 'B' column includes numbers ranging from 1-15, 'I' column from 16-30, etc.)
 - **Automated robot opponent**
-  - marks its card in real time, accurately, accoording to a number drawn by the opponent. This ensures realistic gameplay
+  - marks its card in real time, accurately, accoording to a number drawn by the user, ensuring realistic gameplay
 - **Wins are automatically detected and celebrated** 
   - animated win banner and confetti explosion when a win occurs
 - **Stylized User Interface**
-  - gradients, shadows, and a responsive layout, which makes for a more enjoyable, quality experience
+  - gradients, shadows, and a responsive layout makes for a more enjoyable, quality experience
 
 
 ## 🐞 Structure
 * **UNIX-Final-Project/**
-  * server.c        : Backend (Custom C HTTP server)
-  * index.html      : Frontend (HTML + CSS + JS)
-  * README.md       : Project documentation & Descriptoon
+  * server.c     :    Backend (Custom C HTTP server)
+  * index.html   :    Frontend (HTML + CSS + JS)
+  * README.md    :    Project documentation & Descriptoon
 
 ### Backend (C Server)
 * Uses IPv4 TCP sockets (`AF_INET`, `SOCK_STREAM`)
