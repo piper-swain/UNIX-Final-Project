@@ -1,7 +1,7 @@
 # Bingo Web Game (C, HTML, JavaScript)
 **UNIX Programming Final Project**
 
-An interactive Bingo game built from scratch using a custom C-based HTTP server and a dynamic HTML/CSS/JavaScript frontend. The game features a playable user board, an automated robot opponent, animations, and is visually appealing.
+An interactive Bingo game built from scratch using a custom C-based HTTP server and a dynamic HTML/CSS/JavaScript frontend. The game features a playable user board, an automated robot opponent, animations, and a unique, appealing UI.
 
 <img src="https://github.com/user-attachments/assets/222f06e0-9a72-4a90-b0a9-db593ff4c17c" width="300">
 
@@ -50,9 +50,10 @@ An interactive Bingo game built from scratch using a custom C-based HTTP server 
 
 **2. Run the server**
 * ./server
+
 Expected output:
-* Socket created and bound to port 9090
-* Listening...
+  * Socket created and bound to port 9090
+  * Listening...
 
 **3. Open on the web browser**
 * http://localhost:9090
@@ -76,7 +77,7 @@ Expected output:
 * etc.
 ---
 ## 🌷 Demonstrated Concepts & Skills
-**Systems Programming**
+* **Systems Programming**
   * Socket creation and management
   * Memory allocation and file I/O
   * HTTP protocol formatting
