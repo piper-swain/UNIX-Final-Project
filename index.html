@@ -1,16 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+<meta charset="UTF-8">
 <style>
   body {
     margin: 0;
     min-height: 100vh; 
     background: #5b8eb0;
     background: linear-gradient(90deg,rgba(91, 142, 176, 1) 0%, rgba(105, 194, 137, 1) 50%, rgba(227, 196, 123, 1) 100%);
-</style>
-<style>
-td { width:50px; height:50px; text-align:center; vertical-align:middle; }
+   }
+
+table {
+  background: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* grid cells */
+td {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  background: white;
+  border: 1px solid #ddd;
+  transition: background 0.2s;
+}
+
+/* header row stays styled */
+th {
+  background: #f2f2f2;
+}
+
+
+button {
+  background: white;
+  border: none;
+  padding: 12px 25px;
+  margin: 5px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #4489B8;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: #F0D189;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
 
 .win-banner {
     position: fixed;       /* banner stays in place */
@@ -28,14 +74,61 @@ td { width:50px; height:50px; text-align:center; vertical-align:middle; }
     from { transform: translate(-50%, -50%) scale(1); }
     to { transform: translate(-50%, -50%) scale(1.2); }
 }
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  left: 50%;
+  z-index: 9999;
+  animation: fall 2s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#call.animate {
+  animation: popIn 0.4s ease;
+}
+
+#call {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+table {
+  position: relative;
+  z-index: 2;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1 style="text-align:center; font-size:50px;">Let's play BINGO!</h1>
+<h1 style="text-align:center; font-size:50px; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4);">⭐ Let's play BINGO! ⭐</h1>
 
-<div style="text-align:center; font-size:40px;" id="call">Draw Next Number</div>
+<div style="text-align:center; font-size:40px;color:white;text-shadow: 2px 2px 6px rgba(0,0,0,0.4);" id="call">draw Next Number</div>
 
 <div style="text-align:center; margin:10px;">
 <button onclick="draw()">Draw Number</button>
@@ -45,14 +138,14 @@ td { width:50px; height:50px; text-align:center; vertical-align:middle; }
 <div style="display:flex; justify-content:space-around;">
 
 <div>
-<h2>Your Bingo Card</h2>
+<h2 style="text-align:center; color:white; text-shadow:2px 2px 6px rgba(0,0,0,0.4)">Your Bingo Card</h2>
 <table id="player" border="1" style="font-size:30px;">
 <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
 </table>
 </div>
 
 <div>
-<h2>Robot's Bingo Card</h2>
+<h2 style="text-align:center; color:white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4)">Robot's Bingo Card</h2>
 <table id="robot" border="1" style="font-size:30px;">
 <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
 </table>
@@ -93,7 +186,7 @@ function generateBoard(tableId, clickable) {
       let max = min + 14;
 
       if (r === 2 && c === 2) {
-        cell.innerText = "FREE";
+        cell.innerText = "⭐";
         cell.style.backgroundColor = tableId === "player" ? "lightgreen" : "lightcoral";
       } else {
         let num = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -118,13 +211,16 @@ function draw() {
   }
 
   let call = calls[index];
-  document.getElementById('call').innerText = call[0] + "-" + call.slice(1);
-  index++;
-}
+  let el = document.getElementById('call');
 
-function mark(cell) {
-  cell.style.backgroundColor = 'lightgreen';
-  if (checkWin('player')) showWin('You won!');
+  el.innerText = call[0] + "-" + call.slice(1);
+
+  // restart animation
+  el.classList.remove("animate");
+  void el.offsetWidth; // forces reflow so animation can replay
+  el.classList.add("animate");
+
+  index++;
 }
 
 function showWin(message) {
@@ -177,6 +273,24 @@ window.onload = () => {
   generateBoard("player", true);
   generateBoard("robot", false);
 };
+
+function launchConfetti() {
+  for (let i = 0; i < 80; i++) {
+    let conf = document.createElement("div");
+    conf.className = "confetti";
+
+    conf.style.left = Math.random() * 100 + "vw";
+    conf.style.backgroundColor =
+      ["#ff4fa3", "#ffea73", "#69c289", "#5b8eb0"][Math.floor(Math.random()*4)];
+
+    conf.style.animationDuration = (1 + Math.random() * 2) + "s";
+
+    document.body.appendChild(conf);
+
+    setTimeout(() => conf.remove(), 3000);
+  }
+}
+
 </script>
 
 </body>
